@@ -112,7 +112,6 @@ def notify_desktop(title: str = "Desktop Notification"):
             except Exception as e: 
                 logger.error('Error occured during the process: '+ str(e))
                 
-                machine = socket.gethostname()
                 end_time = datetime.now().strftime(DATE_FORMAT)
 
                 contents = [
@@ -122,6 +121,8 @@ def notify_desktop(title: str = "Desktop Notification"):
                 ]
 
                 display_notification(text='\n'.join(contents), title=title)
+
+                raise e
             
         return wrapper_func
     return decorator_func
