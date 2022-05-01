@@ -3,13 +3,13 @@ sys.path.append("..\\")
 
 import unittest
 import time
-from ml_experiments.notify import notify_email
+from ml_experiments.notify import notify_desktop
 
 class TestSenders(unittest.TestCase):
-    def test_email(self):
-        @notify_email(recipient_emails=['emaildev037@gmail.com'], sender_email='emaildev037@gmail.com')
+    def test_desktop(self):
+        @notify_desktop(title='Testing Completed!')
         def train():
-            time.sleep(5)
+            time.sleep(2)
             return {"loss": 5}
         self.assertEqual(train(), {"loss": 5})
 
