@@ -22,7 +22,6 @@ def notify_email(recipient_emails: list, sender_email: str):
         recipient_emails = [recipient_emails]
 
     for _, email in enumerate(recipient_emails):
-        print(email)
         if not re.fullmatch(REGEX, email):
             raise Exception(f'{email} is not a valid email format.')
 
@@ -40,23 +39,18 @@ def notify_email(recipient_emails: list, sender_email: str):
                 func(*args, **kwargs)
                 end_time = datetime.now().strftime(DATE_FORMAT)
 
+                contents = [
+                    f'You are receiving this email as the {func_name} process running on {machine} machine is completed 🚀.',
+                    f'This process started at {start_time} and finished successfully at {end_time}.'
+                ]
+
                 yag.send(
-                    recipient_emails,"Subject Of Mail","Content Of Mail"
-                )
+                    to = recipient_emails,
+                    subject = 'Process finished successfully 🚀.',
+                    contents = contents)
 
             except Exception as e: 
-                logger.error('Failed to upload to ftp: '+ str(e))
+                logger.error('Error occured during the process: '+ str(e))
             
         return wrapper_func
     return decorator_func
-
-
-@notify_email(recipient_emails=[''], sender_email='')
-def daily_backup():
-
-    time.sleep(3)
-    print('Daily backup job has finished.')   
-    # raise Exception("testing logger")
-    return 3
-
-daily_backup()
