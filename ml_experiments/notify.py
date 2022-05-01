@@ -3,6 +3,10 @@ import socket
 import functools
 import re
 import yagmail
+import sys
+import subprocess
+import platform
+
 from loguru import logger
 from datetime import datetime
 
@@ -36,7 +40,7 @@ def notify_email(recipient_emails: list, sender_email: str):
             start_time = datetime.now().strftime(DATE_FORMAT)
 
             try:
-                func(*args, **kwargs)
+                value = func(*args, **kwargs)
                 end_time = datetime.now().strftime(DATE_FORMAT)
 
                 contents = [
@@ -48,9 +52,76 @@ def notify_email(recipient_emails: list, sender_email: str):
                     to = recipient_emails,
                     subject = 'Process finished successfully 🚀.',
                     contents = contents)
+                
+                return value
 
             except Exception as e: 
                 logger.error('Error occured during the process: '+ str(e))
+            
+        return wrapper_func
+    return decorator_func
+
+
+def notify_desktop(title: str = "Desktop Notification"):
+
+    def display_notification(text: str, title: str):
+        if platform.system() == "Windows":
+
+            try:
+                from win10toast import ToastNotifier
+            except Exception as e:
+                logger.error("Error importing ToastNotifier, please run pip install win10toast")
+
+            toast = ToastNotifier()
+
+            toast.show_toast(
+                title=title,
+                msg=text,
+                icon_path=None,
+                duration=7)
+
+            pass
+
+        elif platform.system() == "Linux":
+            subprocess.run(["notify-send", title, text])
+
+        elif platform.system() == "Darwin":
+            subprocess.run(["sh", "-c", "osascript -e 'display notification \"%s\" with title \"%s\"'" % (text, title)])
+
+
+    def decorator_func(func):
+        @functools.wraps(func)
+        def wrapper_func(*args, **kwargs):
+
+            machine = socket.gethostname()
+            func_name = func.__name__
+            start_time = datetime.now().strftime(DATE_FORMAT)
+
+            try:
+                value = func(*args, **kwargs)
+                end_time = datetime.now().strftime(DATE_FORMAT)
+
+                contents = [
+                    f'You are receiving this notification as the {func_name} process running on {machine} machine is completed 🚀.',
+                    f'This process started at {start_time} and finished successfully at {end_time}.'
+                ]
+
+                display_notification(text='\n'.join(contents), title=title)
+
+                return value
+            except Exception as e: 
+                logger.error('Error occured during the process: '+ str(e))
+                
+                machine = socket.gethostname()
+                end_time = datetime.now().strftime(DATE_FORMAT)
+
+                contents = [
+                    f'An error occured while running your script.',
+                    f'The error occured at {datetime.now().strftime(DATE_FORMAT)} with an exception "{str(e)}"',
+                    f'Your process running on {machine} machine started at {start_time} and failed at {end_time}.'
+                ]
+
+                display_notification(text='\n'.join(contents), title=title)
             
         return wrapper_func
     return decorator_func
