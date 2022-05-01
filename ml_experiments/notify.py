@@ -51,12 +51,26 @@ def notify_email(recipient_emails: list, sender_email: str):
                 yag.send(
                     to = recipient_emails,
                     subject = 'Process finished successfully 🚀.',
-                    contents = contents)
+                    contents = '\n'.join(contents))
                 
                 return value
 
             except Exception as e: 
-                logger.error('Error occured during the process: '+ str(e))
+                logger.error('Error occurred during the process: '+ str(e))
+                
+                end_time = datetime.now().strftime(DATE_FORMAT)
+
+                contents = [
+                    f'The error occured at {datetime.now().strftime(DATE_FORMAT)} with an exception "{str(e)}"',
+                    f'Your process running on {machine} machine started at {start_time} and failed at {end_time}.'
+                ]
+
+                yag.send(
+                    to = recipient_emails,
+                    subject = 'An error occurred while running your script.',
+                    contents = '\n'.join(contents))
+
+                raise e
             
         return wrapper_func
     return decorator_func
@@ -110,13 +124,13 @@ def notify_desktop(title: str = "Desktop Notification"):
 
                 return value
             except Exception as e: 
-                logger.error('Error occured during the process: '+ str(e))
+                logger.error('Error occurred during the process: '+ str(e))
                 
                 end_time = datetime.now().strftime(DATE_FORMAT)
 
                 contents = [
-                    f'An error occured while running your script.',
-                    f'The error occured at {datetime.now().strftime(DATE_FORMAT)} with an exception "{str(e)}"',
+                    f'An error occurred while running your script.',
+                    f'The error occurred at {datetime.now().strftime(DATE_FORMAT)} with an exception "{str(e)}"',
                     f'Your process running on {machine} machine started at {start_time} and failed at {end_time}.'
                 ]
 
