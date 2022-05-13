@@ -83,5 +83,6 @@ class Dataset:
         # csv = pd.read_csv(self.csv_path)
         # csv.head()
 
-        self.split_state = DatasetState.SPLIT_END
-        logger.info(f"Dataset splitted to {self.output_directory} successfully.")
+        # self.split_state = DatasetState.SPLIT_END
+        # logger.info(f"Dataset splitted to {self.output_directory} successfully.")
+        raise NotImplementedError
