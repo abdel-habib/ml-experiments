@@ -7,6 +7,9 @@ This package is under development.
 
 ```python
 pip install ml-experiments
+
+# or (if you are not getting the latest version)
+pip install git+https://github.com/abdalrhmanu/ml-experiments.git --upgrade
 ```
 
 ### Notification
@@ -32,10 +35,19 @@ dataset = Dataset(
   dataset_path=r'..\\dev\\dataset', 
   csv_path=r'..\\dev\\test.csv',
   output_directory=r'..\\dev\\out',
-  # output_directory=None, 
   output_format="dir")
 
+# split (copy) to the defined output directory to every label
 dataset.split_to_directory()
+
+dataset2 = Dataset(
+  dataset_path=r'..\\dev\\dataset', 
+  csv_path=r'..\\dev\\test.csv',
+  output_directory=None,
+  output_format="df")
+
+# splits to a dataframe without creating any new directory 
+df, x_col, y_col = dataset2.split_to_df()
 
 ```
 
