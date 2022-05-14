@@ -10,7 +10,30 @@ from ml_experiments.enums import DatasetState
 from loguru import logger
 
 class Dataset:
-    def __init__(self, dataset_path, csv_path, output_directory, output_format):
+    """Dataset class handles splitting your entire dataset into a defined output directory or to a dataframe.
+        Current implementation supports `split_to_directory` method which copies the image data from the given
+        dataset_path to the output_directory.
+    """
+
+    def __init__(self, 
+                dataset_path, 
+                csv_path, 
+                output_directory, 
+                output_format):
+
+        """Create an input from TFRecord files.
+
+        Args:
+        dataset_path: `str` for directory for the image dataset
+        csv_path: `str` directory for the csv file containing the dataset informaion.
+            CSV file must contain both `label` and `image_id` colums for the class name
+            and image name as in the dataset path respectively.
+        output_directory: `str|None` for the directory of the output splitted dataset. 
+            If it was not passed, it will be created automatically only for `split_to_directory`
+            method. Can be set to none if you will split to df.
+        output_format: `str` for the type of output, must be either `df` or `dir`.
+        """
+
 
         self._split_state = DatasetState.SPLIT_INIT
         self._split_method = None
@@ -27,7 +50,7 @@ class Dataset:
         # Define the output dir based on the required format
         if(output_format == "df"):
             self.output_directory = None
-        elif (output_format == "directory"):
+        elif (output_format == "dir"):
             self.output_directory = f'{output_directory}_{time.strftime(self._date_format, time.gmtime())}'
         else:
             raise Exception("Output format not supported. Can only convert the dataset to either dataframe or directory")
@@ -75,6 +98,11 @@ class Dataset:
         return tail or ntpath.basename(head)
 
     def get_classes(self):
+        """Returns all classes for your dataset.
+
+        Returns:
+            a list of classes for your dataset.
+        """
         if self.split_state is not DatasetState.SPLIT_END:
             logger.error(f"You must split the dataset first before calling {inspect.stack()[0][3]}")
             return
@@ -96,6 +124,8 @@ class Dataset:
         raise NotImplementedError
 
     def split_to_directory(self):
+        """Split the dataset based on the given dataset directory and csv file into an output directory in your project folder.
+        """
         self.split_method = DatasetState.SPLIT_DIR
         df = pd.read_csv(self.csv_path)
         df_header = list(df)
