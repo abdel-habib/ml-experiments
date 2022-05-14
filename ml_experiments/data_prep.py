@@ -21,7 +21,7 @@ class Dataset:
                 output_directory, 
                 output_format):
 
-        """Create an input from TFRecord files.
+        """Handles dataset pre-processing and splitting.
 
         Args:
         dataset_path: `str` for directory for the image dataset
@@ -119,9 +119,33 @@ class Dataset:
         raise NotImplementedError
 
     def split_to_df(self):
-        # self.split_method = DatasetState.SPLIT_DF
-        # self.split_state = DatasetState.SPLIT_END
-        raise NotImplementedError
+        """Split the dataset based on the given dataset csv file into a df.
+
+            Returns:
+                df: `dataframe` a df representing the csv file
+                x_col: `str` column representing the image id (names) column
+                y_col: `str` column representing the label name column
+        """
+        self.split_method = DatasetState.SPLIT_DF
+        
+        x_col="image_id"
+        y_col="label"
+        xy_col = [x_col, y_col]
+
+        df = pd.read_csv(self.csv_path)
+        df = df.loc[:, xy_col]
+        df_header = list(df)
+        
+
+        # Validate that the datafrate contains image_id and label as headers
+        if not all(x in df_header for x in xy_col):
+            logger.error(f'CSV file missing {"image_id, label"} headers. Aborting splitting..')
+            return
+
+        self.split_state = DatasetState.SPLIT_END
+        logger.info(f"Dataset splitted to dataframe successfully.")
+
+        return df, x_col, y_col
 
     def split_to_directory(self):
         """Split the dataset based on the given dataset directory and csv file into an output directory in your project folder.
