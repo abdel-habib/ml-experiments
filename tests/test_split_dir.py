@@ -18,6 +18,8 @@ class TestSplitToDir(unittest.TestCase):
 
         self.assertIsNotNone(classes, f"Splitting test failed: {classes}")
 
+class TestSplitToDf(unittest.TestCase):
+    def test_df(self):
         dataset2 = Dataset(
             dataset_path=r'..\\dev\\dataset', 
             csv_path=r'..\\dev\\test.csv',
