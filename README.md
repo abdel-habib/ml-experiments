@@ -6,10 +6,10 @@ This package is under development.
 ## Installation
 
 ```python
-pip install ml-experiments
+pip3 install ml-experiments --upgrade
 
 # or (if you are not getting the latest version)
-pip install git+https://github.com/abdalrhmanu/ml-experiments.git --upgrade
+pip3 install git+https://github.com/abdalrhmanu/ml-experiments.git --upgrade
 ```
 
 ### Notification
