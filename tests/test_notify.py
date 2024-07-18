@@ -3,7 +3,7 @@ sys.path.append("..\\")
 
 import unittest
 import time
-from ml_experiments.notify import notify_desktop
+from ml_experiments.models.callbacks.notify import notify_desktop
 
 class TestSenders(unittest.TestCase):
     def test_desktop(self):

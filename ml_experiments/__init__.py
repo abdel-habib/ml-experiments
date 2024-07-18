@@ -1,1 +1,1 @@
-from ml_experiments import data_prep, notify
+from ml_experiments.models.callbacks import notify
